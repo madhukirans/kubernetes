@@ -1,33 +1,37 @@
-#!/bin/sh
+#!/bin/bash
+
+set -e
+
 #
 # run with "sudo sh ./this_script.sh"
 
 source ./common.sh
 
 # check that docker is installed, and the version is what we expect
-docker version > /tmp/version.out
-ver=`grep Version: /tmp/version.out | head -1 | awk '{print $2}'`
-if [ "$ver" != "$docker_version" ] ; then
-  echo "Docker version not correct, or not installed properly"
-  echo "expected $docker_version got $ver in output" 
-  cat /tmp/version.out
-  exit 1
-fi
+#docker version > /tmp/version.out
+#ver=`grep Version: /tmp/version.out | head -1 | awk '{print $2}'`
+#if [ "$ver" != "$docker_version" ] ; then
+#  echo "Docker version not correct, or not installed properly"
+#  echo "expected $docker_version got $ver in output"
+#  cat /tmp/version.out
+#  exit 1
+#fi
 
 yum erase -y kubelet kubeadm kubectl
-rm -rf /etc/kubernetes/*
+rm -rf /etc/kubernetes
+rm -rf /var/lib/kubelet
 
 ### install kubernetes packages
 # generate the yum repo config
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=http://yum.kubernetes.io/repos/kubernetes-el7-x86_64
+baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
 enabled=1
-gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
 
 
@@ -51,20 +55,21 @@ firewall-cmd --reload
 
 # install kube* packages
 yum makecache fast
-yum install -y kubelet-1.15.0-0.x86_64 kubeadm-1.15.0-0.x86_64 kubectl-1.15.0-0.x86_64
+k8sversion=1.14.5
+yum install -y kubelet-$k8sversion kubeadm-$k8sversion kubectl-$k8sversion
 #kubernetes-cni-0.5.1-0.x86_64
 kubeadm config images pull
+
 
 # change the cgroup-driver to match what docker is using
 cgroup=`docker info 2>&1 | egrep Cgroup | awk '{print $NF}'`
 [ "$cgroup" == "" ] && echo "cgroup not detected!" && exit 1
 
-#cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --allow-privileged=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
-#cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out | sed "s#\$KUBELET_NETWORK_ARGS##"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out1
-#diff  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out1
-#mv  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --allow-privileged=true --feature-gates=VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
+mv  -f /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 # enable and start service
+systemctl daemon-reload
 systemctl enable kubelet && systemctl start kubelet
 
 echo "Next Set of instructions are ONLY for K8S Master host".

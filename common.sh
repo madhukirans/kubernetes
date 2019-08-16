@@ -1,22 +1,6 @@
-# 
-# based off of install/configure instructions at
-# main qa wiki
-# http://aseng-wiki.us.oracle.com/asengwiki/display/ASQA/Installing+Kubernetes+on+Linux+with+kubeadm
-#
+#!/usr/bin/env bash
 
-if [ -z "$1" ]; then
-  echo "No argument supplied, Please pass master or worker i.e. install_docker_k8s.sh master|worker"
-  exit 1
-fi
-
-
-if [ "$1" = "master" ] || [ "$1" = "worker" ]; then
-  echo "Doing install for K8S $1"
-  install_mode="$1"
-else
-  echo "Only  master or worker are vaild arguments i.e. install_docker_k8s.sh master|worker"
-  exit 1
-fi
+set -e
 
 warning=`cat << EOF
  WARNING:  this script is intended for a clean re-imaged machine
@@ -34,12 +18,6 @@ else
   echo "Aborting...";
   exit 1
 fi
-# customize these dirs as needed
-docker_dir=/scratch/docker
-k8s_dir=/scratch/k8s_dir
-
-rm -rf $docker_dir $k8s_dir
-mkdir -p $docker_dir $k8s_dir
 
 set -e
 set -- "" "${@:2}"
@@ -58,3 +36,19 @@ set +e
 # generate a shell script to append to users .bashrc 
 # so that proxy variables, etc are set on login
 ip_addr=$(host `hostname` | egrep -o '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+
+
+
+os=""
+rhel_out=`egrep "Red Hat Enterprise Linux Server release 7.(5|6|7|8)" /etc/redhat-release`
+centos_out=`egrep "CentOS Linux release 7.(5|6|7|8)" /etc/redhat-release`
+
+if [ "$rhel_out" != "" ] ; then
+   os=redhat
+fi
+
+if [ "$centos_out" != "" ] ; then
+   os=centos
+fi
+
+echo Operating system $os : `cat /etc/redhat-release`
