@@ -55,7 +55,7 @@ firewall-cmd --reload
 
 # install kube* packages
 yum makecache fast
-k8sversion=1.14.5
+k8sversion=1.15.2-0 #1.14.5
 yum install -y kubelet-$k8sversion kubeadm-$k8sversion kubectl-$k8sversion
 #kubernetes-cni-0.5.1-0.x86_64
 kubeadm config images pull
@@ -65,8 +65,13 @@ kubeadm config images pull
 cgroup=`docker info 2>&1 | egrep Cgroup | awk '{print $NF}'`
 [ "$cgroup" == "" ] && echo "cgroup not detected!" && exit 1
 
-cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --allow-privileged=true --feature-gates=VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
-mv  -f /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+if [ "$k8sversion" = "1.15.2-0" ] ; then
+    cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --feature-gates=VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
+    mv  -f /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+elif [ "$k8sversion" = "1.14.5" ] ; then
+    cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --allow-privileged=true --feature-gates=VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
+    mv  -f /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
+fi
 
 # enable and start service
 systemctl daemon-reload

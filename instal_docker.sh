@@ -33,16 +33,16 @@ EOF
 yum remove -y docker docker-ce docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine docker-engine-selinux
 
 
-if [ "$os" = "centos" ] ; then
+#if [ "$os" = "centos" ] ; then
     docker_version="18.09.6"
     # now install the docker-ce at our specified version
     yum install -y docker-ce-cli-$docker_version docker-ce-$docker_version
-elif [ "$os" = "redhat" ] ; then
-    yum install -y docker
-else
-    echo "Invalid OS version. OS should be RedHat 7.5 or more (or) centos 7.5 or more"
-    exit -1
-fi
+#elif [ "$os" = "redhat" ] ; then
+#    yum install -y docker
+#else
+#    echo "Invalid OS version. OS should be RedHat 7.5 or more (or) centos 7.5 or more"
+#    exit -1
+#fi
 usermod -aG docker seelam
 
 cat /usr/lib/systemd/system/docker.service | sed "s#^Type=notify#Type=notify\nMountFlags=shared#g" > /tmp/docker.out
