@@ -14,15 +14,15 @@ firewall-cmd --reload
 iptables -F && iptables -t nat -F && iptables -t mangle -F && iptables -X
 
 #Enabling feature gates
-if [ ! -f /bin/yq ] ; then
-    wget https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64
-    mv -f yq_linux_amd64 /bin/yq
-    chmod 777 /bin/yq
-fi
+#if [ ! -f /bin/yq ] ; then
+#    wget https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64
+#    mv -f yq_linux_amd64 /bin/yq
+#    chmod 777 /bin/yq
+#fi
 
 # run kubeadm init as root
-echo Running kubeadm init --pod-network-cidr=10.244.0.0/16
-echo " see /tmp/kubeadm-init.out for output"
+echo Running kubeadm init --config kubeadm-config.yaml
+#kubeadm init --pod-network-cidr=10.244.0.0/16
 kubeadm init --config kubeadm-config.yaml
 
 cat << EOF >> /var/lib/kubelet/config.yaml

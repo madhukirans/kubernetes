@@ -66,10 +66,10 @@ cgroup=`docker info 2>&1 | egrep Cgroup | awk '{print $NF}'`
 [ "$cgroup" == "" ] && echo "cgroup not detected!" && exit 1
 
 if [ "$k8sversion" = "1.15.2-0" ] ; then
-    cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --feature-gates=VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
+    cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --feature-gates=VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
     mv  -f /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
 elif [ "$k8sversion" = "1.14.5" ] ; then
-    cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --allow-privileged=true --feature-gates=VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
+    cat /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf | sed "s#KUBELET_KUBECONFIG_ARGS=.*#KUBELET_KUBECONFIG_ARGS=--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --feature-gates=VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true\"#"> /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out
     mv  -f /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf.out  /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf
 fi
 
