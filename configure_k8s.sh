@@ -32,6 +32,7 @@ CSINodeInfo: true
 CSIDriverRegistry: true
 BlockVolume: true
 CSIBlockVolume: true
+ExpandCSIVolumes: true
 EOF
 
 if [ $? -ne 0 ] ; then

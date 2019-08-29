@@ -55,7 +55,7 @@ firewall-cmd --reload
 
 # install kube* packages
 yum makecache fast
-k8sversion=1.15.2-0 #1.14.5
+k8sversion=1.14.5 #1.15.2-0 #
 yum install -y kubelet-$k8sversion kubeadm-$k8sversion kubectl-$k8sversion
 #kubernetes-cni-0.5.1-0.x86_64
 kubeadm config images pull
