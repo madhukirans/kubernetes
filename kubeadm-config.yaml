@@ -1,18 +1,21 @@
-apiVersion: kubeadm.k8s.io/v1beta2
+apiVersion: kubeadm.k8s.io/v1beta1
 certificatesDir: /etc/kubernetes/pki
 clusterName: kubernetes
 apiServer:
   extraArgs:
     authorization-mode: Node,RBAC
-    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
-    enable-admission-plugins: PersistentVolumeClaimResize,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota
+    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true
+    #,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
+    #enable-admission-plugins: PersistentVolumeClaimResize,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota
   timeoutForControlPlane: 4m0s
 scheduler:
   extraArgs:
-    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
+    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true
+    #,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
 controllerManager:
   extraArgs:
-    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
+    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true
+    #,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
 dns:
   type: CoreDNS
 etcd:

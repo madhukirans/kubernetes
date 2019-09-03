@@ -57,6 +57,7 @@ kubectl get pods
 
 curl -L https://git.io/get_helm.sh | bash
 
+echo "Sometimes reboot is necessary for helm deployment :( "
 helm init --force-upgrade
 helm init -i https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
 
