@@ -4,14 +4,15 @@ clusterName: kubernetes
 apiServer:
   extraArgs:
     authorization-mode: Node,RBAC
-    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true
+    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
+    enable-admission-plugins: PersistentVolumeClaimResize,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,NodeRestriction,ResourceQuota
   timeoutForControlPlane: 4m0s
 scheduler:
   extraArgs:
-    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true
+    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
 controllerManager:
   extraArgs:
-    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true
+    feature-gates: VolumeSnapshotDataSource=true,KubeletPluginsWatcher=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true,ExpandCSIVolumes=true,ExpandPersistentVolumes=true,ExpandInUsePersistentVolumes=true
 dns:
   type: CoreDNS
 etcd:

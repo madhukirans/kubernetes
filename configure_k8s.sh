@@ -33,20 +33,11 @@ CSIDriverRegistry: true
 BlockVolume: true
 CSIBlockVolume: true
 ExpandCSIVolumes: true
+ExpandPersistentVolumes: true
+ExpandInUsePersistentVolumes: true
 EOF
 
-if [ $? -ne 0 ] ; then
-  echo "ERROR: kubeadm init returned non 0"
-  chmod a+r  /tmp/kubeadm-init.out
-  exit 1
-else
-  echo; echo "kubeadm init complete" ; echo
-  # tail the log to get the "join" token
-  tail -6 /tmp/kubeadm-init.out 
-fi 
-
-cp /etc/kubernetes/admin.conf /home/seelam/kubeconfig
-cp /tmp/kubeadm-init.out /home/seelam/
+cp -f /etc/kubernetes/admin.conf /home/seelam/kubeconfig
 # chown $real_user:$real_group $KUBECONFIG
 # chmod 644 $KUBECONFIG
 chown seelam:seelam -R /home/seelam
