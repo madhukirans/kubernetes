@@ -6,7 +6,7 @@ set -e
 
 source common.sh
 
-yum update -y
+#yum update -y
 yum install -y device-mapper-persistent-data lvm2 yum-utils dos2unix unzip ed net-tools bind-utils
 
 yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
