@@ -61,6 +61,9 @@ echo "Sometimes reboot is necessary for helm deployment :( "
 helm init --force-upgrade
 helm init -i https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
 
+echo "On node execute the follwoing commands"
+echo "ip link delete cni0"
+echo "ip link delete flannel.1"
 
 echo
 echo
