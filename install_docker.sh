@@ -43,7 +43,7 @@ yum remove -y docker docker-ce docker-client docker-client-latest docker-common 
 #    echo "Invalid OS version. OS should be RedHat 7.5 or more (or) centos 7.5 or more"
 #    exit -1
 #fi
-usermod -aG docker seelam
+#usermod -aG docker seelam
 
 cat /usr/lib/systemd/system/docker.service | sed "s#^Type=notify#Type=notify\nMountFlags=shared#g" > /tmp/docker.out
 diff /usr/lib/systemd/system/docker.service /tmp/docker.out

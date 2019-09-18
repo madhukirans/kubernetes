@@ -13,16 +13,40 @@ firewall-cmd --permanent --add-port={6443,2379,2380,10250,10251,10252,10250,3000
 firewall-cmd --reload
 iptables -F && iptables -t nat -F && iptables -t mangle -F && iptables -X
 
+#Enabling feature gates
+#if [ ! -f /bin/yq ] ; then
+#    wget https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64
+#    mv -f yq_linux_amd64 /bin/yq
+#    chmod 777 /bin/yq
+#fi
 
 # run kubeadm init as root
-echo Running kubeadm init --pod-network-cidr=10.244.0.0/16
-kubeadm init --pod-network-cidr=10.244.0.0/16
+echo Running kubeadm init --config kubeadm-config.yaml
+#kubeadm init --pod-network-cidr=10.244.0.0/16
+kubeadm init --config kubeadm-config.yaml
 
-echo Created KUBECONFIG at /etc/kubernetes/admin.conf
+cat << EOF >> /var/lib/kubelet/config.yaml
+VolumeSnapshotDataSource: true
+KubeletPluginsWatcher: true
+CSINodeInfo: true
+CSIDriverRegistry: true
+BlockVolume: true
+CSIBlockVolume: true
+ExpandCSIVolumes: true
+ExpandPersistentVolumes: true
+ExpandInUsePersistentVolumes: true
+EOF
+
+cp -f /etc/kubernetes/admin.conf /home/seelam/kubeconfig
+# chown $real_user:$real_group $KUBECONFIG
+# chmod 644 $KUBECONFIG
+chown seelam:seelam -R /home/seelam
+
+echo Created KUBECONFIG at /home/seelam/kubeconfig
 
 sleep 20
 
-export KUBECONFIG=/etc/kubernetes/admin.conf
+export KUBECONFIG=/home/seelam/kubeconfig
 kubectl create clusterrolebinding my-cluster-admin-binding --clusterrole=cluster-admin
 kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
