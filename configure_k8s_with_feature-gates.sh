@@ -37,16 +37,11 @@ ExpandPersistentVolumes: true
 ExpandInUsePersistentVolumes: true
 EOF
 
-cp -f /etc/kubernetes/admin.conf /home/seelam/kubeconfig
-# chown $real_user:$real_group $KUBECONFIG
-# chmod 644 $KUBECONFIG
-chown seelam:seelam -R /home/seelam
-
-echo Created KUBECONFIG at /home/seelam/kubeconfig
+echo Created KUBECONFIG at /etc/kubernetes/admin.conf
 
 sleep 20
 
-export KUBECONFIG=/home/seelam/kubeconfig
+export KUBECONFIG=/etc/kubernetes/admin.conf
 kubectl create clusterrolebinding my-cluster-admin-binding --clusterrole=cluster-admin
 kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
